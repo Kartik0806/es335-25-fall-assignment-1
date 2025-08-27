@@ -32,8 +32,8 @@ for criteria in ["information_gain", "gini_index"]:
     print("RMSE: ", rmse(y_hat, y))
     print("MAE: ", mae(y_hat, y))
 
-# Test case 2
-# Real Input and Discrete Output
+# # Test case 2
+# # Real Input and Discrete Output
 
 N = 30
 P = 5

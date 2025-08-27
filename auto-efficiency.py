@@ -12,5 +12,7 @@ data = pd.read_csv(url, delim_whitespace=True, header=None,
                  names=["mpg", "cylinders", "displacement", "horsepower", "weight",
                         "acceleration", "model year", "origin", "car name"])
 
+print(data["car name"].nunique())
+print(data.shape)
 # Clean the above data by removing redundant columns and rows with junk values
 # Compare the performance of your model with the decision tree module from scikit learn
