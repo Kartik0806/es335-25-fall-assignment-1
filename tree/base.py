@@ -45,7 +45,7 @@ class DecisionTree:
         """
         self.root = self.build(X, y, 0)
 
-        print("done building")
+        # print("done building")
         # If you wish your code can have cases for different types of input and output data (discrete, real)
         # Use the functions from utils.py to find the optimal attribute to split upon and then construct the tree accordingly.
         # You may(according to your implemetation) need to call functions recursively to construct the tree. 
@@ -104,24 +104,25 @@ class DecisionTree:
         else:
             feature = node.split_upon
             # print(X[feature].iloc[0])
-
-            if check_ifreal(X[feature]):
+            x = None
+            if node.value is not None:
                 # print(node.mean)
                 if X[feature].iloc[0] < node.value:
                     x =  self.traverse(node.children["left"], X)
-                    # print(x)
-                    return x
+                    # return x
                 else:
                     x = self.traverse(node.children["right"], X)
-                    # print(x)
-                    return x
+                    # return x
             else:
                 for key, child in node.children.items():
                     # print(key)
                     if(X[feature].iloc[0] == key):
                         x = self.traverse(child, X)
-                        # print(x)
-                        return x
+                        # return x
+                        break
+            if(x is None):
+                return node.label, node.mean
+            return x
         # print(node.split_upon, node.value, node.label, node.mean)
         # return node.label, node.mean
 
@@ -132,7 +133,6 @@ class DecisionTree:
         y_hat = []
         for i in range(len(X)):
             y_ = self.traverse(self.root, X[i:i+1])
-            # print(y_)
             y_hat.append(y_[0] if y_[0] is not None else y_[1])
         return pd.Series(y_hat)
         # Traverse the tree you constructed to return the predicted values for the given test inputs.

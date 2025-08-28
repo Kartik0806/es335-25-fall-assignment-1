@@ -27,9 +27,35 @@ tree.fit(X_train, y_train)
 y_hat = tree.predict(X_test)
 tree.plot()
 print("Criteria :", criteria)
-print(y_hat.shape, y_test.shape)
+# print(y_hat.shape, y_test.shape)
 print("Accuracy: ", accuracy(y_hat, y_test))
 for cls in y.unique():
 
     print("Precision: ", precision(y_hat, y_test, cls))
     print("Recall: ", recall(y_hat, y_test, cls))
+
+
+print(50*"-", "cross validation", 50*"-")
+
+K = 5
+fold_size = len(X)//K
+score = 0
+depths = [2,3,5,6,7]
+best_depth = None
+best_score = 0
+for depth in depths:
+    for i in range(K):
+        X_test_k = X[i*fold_size: (i+1)*fold_size]
+        y_test_k = y[i*fold_size: (i+1)*fold_size]
+        X_train_k = pd.concat([X[:i*fold_size], X[(i+1)*fold_size:]])
+        y_train_k = pd.concat([y[:i*fold_size], y[(i+1)*fold_size:]])
+        tree = DecisionTree(criterion=criteria, max_depth=depth)
+        tree.fit(X_train_k, y_train_k)
+        y_hat = tree.predict(X_test_k)
+        score += accuracy(y_hat, y_test_k) / K
+    if score > best_score:
+        best_score = score
+        best_depth = depth
+    score = 0
+
+print(best_depth, best_score)
