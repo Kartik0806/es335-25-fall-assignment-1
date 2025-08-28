@@ -28,6 +28,27 @@ class Node:
     mean: Optional[float] = None # for real output
     is_leaf: Optional[bool] = False
 
+    # def __repr__(self):
+    #     """Technical representation (debugging)."""
+    #     if self.value is not None:
+    #         return f"<Leaf value={self.value}>"
+    #     return f"<Node feature=X[{self.feature}] threshold={self.threshold}>"
+
+    # def __str__(self, level=0, prefix="Root: "):
+    #     """Pretty recursive tree printout."""
+    #     indent = "    " * level  # spacing for hierarchy
+    #     if self.value is not None:  # Leaf node
+    #         return f"{indent}{prefix}🌿 Leaf → {self.value}\n"
+
+    #     # Internal split node
+    #     s = f"{indent}{prefix}🔀 X[{self.feature}] <= {self.threshold}\n"
+    #     if self.left:
+    #         s += self.left.__str__(level + 1, prefix="├── Yes: ")
+    #     if self.right:
+    #         s += self.right.__str__(level + 1, prefix="└── No:  ")
+    #     return s
+
+
 @dataclass
 class DecisionTree:
     criterion: Literal["information_gain", "gini_index"]  # criterion won't be used for regression
@@ -43,6 +64,12 @@ class DecisionTree:
         """
         Function to train and construct the decision tree
         """
+        # for col in X.columns:
+        #     print(col, X[col].dtype)
+        X = pd.get_dummies(X)
+
+        # for col in X.columns:
+        #     print(col, X[col].dtype)
         self.root = self.build(X, y, 0)
 
         # print("done building")
@@ -107,6 +134,8 @@ class DecisionTree:
             x = None
             if node.value is not None:
                 # print(node.mean)
+                if feature not in X.columns:
+                    return node.label, node.mean
                 if X[feature].iloc[0] < node.value:
                     x =  self.traverse(node.children["left"], X)
                     # return x
@@ -141,7 +170,7 @@ class DecisionTree:
 
     def plot(self) -> None:
         """
-        Function to plot the tree
+        Function to pretty-print the tree.
 
         Output Example:
         ?(X1 > 4)
@@ -151,4 +180,18 @@ class DecisionTree:
             N: Class C
         Where Y => Yes and N => No
         """
-        pass
+        def print_tree(node, depth=0, prefix=""):
+            indent = "    " * depth  # 4 spaces per depth level
+
+            if node.is_leaf:
+                if node.label:
+                    print(f"{indent}{prefix}Prediction: {node.label}")
+                else:
+                    print(f"{indent}{prefix}Prediction: {node.mean}")
+            else:
+                print(f"{indent}{prefix}?(X{node.split_upon} <= {node.value})")
+                for key, child in node.children.items():
+                    branch = "Y: " if key == "left" else "N: "
+                    print_tree(child, depth + 1, prefix=branch)
+
+        print_tree(self.root)

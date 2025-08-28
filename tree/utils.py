@@ -18,8 +18,8 @@ def check_ifreal(y: pd.Series) -> bool:
     """
     if y.dtype in ["category", "object", "string"]:
         return False
-    if y.nunique() / len(y) <= 0.2:
-        return False
+    # if y.nunique() / len(y) <= 0.2:
+    #     return False
     return True
 
 def entropy(Y: pd.Series) -> float:

@@ -20,6 +20,8 @@ data = data[~(data == '?').any(axis=1)].reset_index(drop = True)
 X = data.drop(columns = ["mpg","car name"])
 y = data["mpg"]
 
+X['horsepower'] = data["horsepower"].astype("float")
+
 criteria = "entropy"
 tree = DecisionTree(criterion=criteria)  # Split based on Inf. Gain
 train_data_size = int(0.7*(len(X)))
